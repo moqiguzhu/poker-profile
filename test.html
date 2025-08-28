@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>测试页面</title>
+</head>
+<body>
+    <h1>扑克游戏用户画像系统 - 测试</h1>
+    <p>服务器运行在: http://localhost:8000</p>
+    
+    <h2>有效用户ID列表:</h2>
+    <ul id="user-list"></ul>
+    
+    <script>
+        // 读取CSV文件获取用户ID
+        async function loadUserIds() {
+            try {
+                const response = await fetch('game_records.csv');
+                const csvText = await response.text();
+                const lines = csvText.split('\n');
+                const userIds = new Set();
+                
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line) {
+                        const parts = line.split(',');
+                        if (parts.length >= 2) {
+                            userIds.add(parts[1].trim());
+                        }
+                    }
+                }
+                
+                const userList = document.getElementById('user-list');
+                Array.from(userIds).sort().forEach(userId => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<a href="index.html" target="_blank">${userId}</a>`;
+                    userList.appendChild(li);
+                });
+                
+            } catch (error) {
+                console.error('加载用户ID失败:', error);
+            }
+        }
+        
+        // 页面加载时执行
+        document.addEventListener('DOMContentLoaded', loadUserIds);
+    </script>
+</body>
+</html>
